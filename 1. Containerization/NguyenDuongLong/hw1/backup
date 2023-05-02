@@ -1,0 +1,32 @@
+version: "3.8"
+
+services:
+  mysqldb:
+    container_name: hw1-mysql
+    image: mysql:latest
+    restart: unless-stopped
+    environment:
+      - MYSQL_ROOT_HOST=%
+      - MYSQL_ROOT_PASSWORD=123456
+      - MYSQL_DATABASE=hw1
+    ports:
+      - "3306:3306"
+    expose:
+      - "3306"
+#    volumes:
+#    - ./database:/docker-entrypoint-initdb.d
+  app:
+    container_name: hw1-spring
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    depends_on:
+      - mysqldb
+    restart: on-failure
+    ports:
+      - "8088:8088"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysqldb:3306/hw1
+
+volumes:
+  db:
